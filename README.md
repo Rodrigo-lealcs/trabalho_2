@@ -1,8 +1,7 @@
 # Inventário de ativos e vulnerabilidades (Trabalho 02)
 
 Aplicação em Python, orientada a objetos, que cadastra equipamentos (ativos de TI) e as
-vulnerabilidades associadas a eles. Os dados ficam em um arquivo JSON e a aplicação
-executa como um serviço HTTP dentro de um container Docker.
+vulnerabilidades associadas a eles. Os dados ficam em um arquivo JSON e a aplicação foi preparada para executar como um serviço HTTP dentro de um container Docker.
 
 Trabalho da disciplina de Cibersegurança (UFU), 2ª atividade avaliativa, Sprints 3 a 5.
 
@@ -14,7 +13,7 @@ Funciona:
   com o campo `tipo` e o método `para_dicionario()`.
 - Persistência em JSON: `salvar_equipamentos` grava uma lista de objetos JSON e
   `carregar_equipamentos` recria o objeto da classe certa a partir do campo `tipo`.
-- Serviço HTTP (`servidor.py`) em container, com as rotas `/saude` e `/equipamentos`.
+- Serviço HTTP (servidor.py) com as rotas /saude e /equipamentos, testado localmente com o Python..
 
 Ainda não implementado:
 
@@ -22,6 +21,8 @@ Ainda não implementado:
   dependências entre equipamentos.
 - CRUD completo, menu, enumeração de tipos de ativo e cadastro completo de vulnerabilidades
   (descrição, categoria, severidade e status).
+- Execução em container: o Dockerfile e o docker-compose.yml estão no repositório, mas ainda
+  não foram testados nem implementados no servidor.
 
 ## Estrutura do repositório
 
