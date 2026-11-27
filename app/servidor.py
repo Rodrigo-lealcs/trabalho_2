@@ -10,7 +10,7 @@ Os dados são lidos do arquivo a cada pedido, então o que muda no menu aparece 
 """
 
 import json
-from http.server import BaseHTTPRequestHandler, HTTPServer
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 import config
 from erros import DadoInvalido, ErroInventario, NaoEncontrado
@@ -66,6 +66,6 @@ class Handler(BaseHTTPRequestHandler):
 
 
 if __name__ == "__main__":
-    servidor = HTTPServer(("0.0.0.0", config.PORTA), Handler)
+    servidor = ThreadingHTTPServer(("0.0.0.0", config.PORTA), Handler)
     print(f"Serviço ligado na porta {config.PORTA}", flush=True)
     servidor.serve_forever()

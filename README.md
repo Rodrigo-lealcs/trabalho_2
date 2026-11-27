@@ -10,7 +10,7 @@ e as vulnerabilidades de cada um. Ele também calcula uma nota de risco para cad
 Com Docker (como será entregue no servidor):
 
     docker compose up -d --build
-    curl localhost:8000/saude
+    curl localhost:2212/saude
 
 Sem Docker, dentro da pasta `app`:
 
@@ -18,8 +18,9 @@ Sem Docker, dentro da pasta `app`:
     python servidor.py    (liga o serviço na porta 8000)
     python -m pytest      (roda os testes)
 
-> Observação: os testes e o menu foram executados no meu computador.
-> O Docker ainda precisa ser conferido no servidor.
+> Testado: os 50 testes passam e o container foi executado no servidor da UFU.
+> No servidor o serviço responde na porta 2212 (2000 + final da matrícula).
+> O Docker reinicia o container se ele cair (`restart: unless-stopped`).
 
 ## O que tem em cada arquivo
 

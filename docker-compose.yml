@@ -1,9 +1,9 @@
 services:
   inventario:
     build: ./app
-    container_name: inventario
+    container_name: trab02_2026_2_12621cbs212
     ports:
-      - "8000:8000"
+      - "2212:8000"
     volumes:
       - inventario_dados:/app/data   # os JSON sobrevivem a reinícios e recriações do container
     restart: unless-stopped          # sobe de novo após queda ou reboot do servidor
