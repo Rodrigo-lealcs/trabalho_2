@@ -1,0 +1,12 @@
+services:
+  inventario:
+    build: ./att3
+    container_name: inventario
+    ports:
+      - "8000:8000"
+    volumes:
+      - inventario_dados:/app/data
+    restart: unless-stopped
+
+volumes:
+  inventario_dados:
