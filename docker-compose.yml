@@ -1,12 +1,12 @@
 services:
   inventario:
-    build: ./att3
+    build: ./app
     container_name: inventario
     ports:
       - "8000:8000"
     volumes:
-      - inventario_dados:/app/data
-    restart: unless-stopped
+      - inventario_dados:/app/data   # os JSON sobrevivem a reinícios e recriações do container
+    restart: unless-stopped          # sobe de novo após queda ou reboot do servidor
 
 volumes:
   inventario_dados:
