@@ -1,85 +1,41 @@
-# Inventário de ativos e vulnerabilidades (Trabalho 02)
+# Inventário de equipamentos e vulnerabilidades
 
-Aplicação em Python, orientada a objetos, que cadastra equipamentos (ativos de TI) e as
-vulnerabilidades associadas a eles. Os dados ficam em um arquivo JSON e a aplicação foi preparada para executar como um serviço HTTP dentro de um container Docker.
+Trabalho de Cibersegurança (UFU), feito em Python.
 
-Trabalho da disciplina de Cibersegurança (UFU), 2ª atividade avaliativa, Sprints 3 a 5.
+O programa guarda uma lista de equipamentos de rede (roteador, servidor, notebook, banco de dados e outros)
+e as vulnerabilidades de cada um. Ele também calcula uma nota de risco para cada equipamento.
 
-## Estado atual
+## Como rodar
 
-Funciona:
+Com Docker (como será entregue no servidor):
 
-- Classe base `Equipamentos` e classes derivadas `Roteador` e `Servidor` (herança),
-  com o campo `tipo` e o método `para_dicionario()`.
-- Persistência em JSON: `salvar_equipamentos` grava uma lista de objetos JSON e
-  `carregar_equipamentos` recria o objeto da classe certa a partir do campo `tipo`.
-- Serviço HTTP (servidor.py) com as rotas /saude e /equipamentos, testado localmente com o Python..
+    docker compose up -d --build
+    curl localhost:8000/saude
 
-Ainda não implementado:
+Sem Docker, dentro da pasta `app`:
 
-- Modelo de risco com álgebra linear (matrizes M, v e A, risco próprio e efetivo) e as
-  dependências entre equipamentos.
-- CRUD completo, menu, enumeração de tipos de ativo e cadastro completo de vulnerabilidades
-  (descrição, categoria, severidade e status).
-- Execução em container: o Dockerfile e o docker-compose.yml estão no repositório, mas ainda
-  não foram testados nem implementados no servidor.
+    python main.py        (abre o menu)
+    python servidor.py    (liga o serviço na porta 8000)
+    python -m pytest      (roda os testes)
 
-## Estrutura do repositório
+> Observação: os testes e o menu foram executados no meu computador.
+> O Docker ainda precisa ser conferido no servidor.
 
-```
-docker-compose.yml        sobe o serviço com "docker compose up -d"
-att3/
-├── Dockerfile            receita da imagem
-├── requirements.txt      dependências declaradas
-├── servidor.py           ponto de entrada: serviço HTTP que fica em execução
-├── modelos.py            classes dos equipamentos
-├── persistencia.py       leitura e gravação do JSON
-├── main.py               teste manual de gravação e leitura
-├── inventario.py         (vazio por enquanto)
-├── risco.py              (vazio por enquanto)
-└── data/inventario.json  dados iniciais
-```
+## O que tem em cada arquivo
 
-## Como construir e executar
+- `modelos.py`: as classes. `Equipamentos` é a classe mãe; `Roteador`, `Servidor`, `Notebook`, `BancoDeDados` e `Outro` (câmera, switch, impressora...) herdam dela.
+- `persistencia.py`: salva e lê os dados nos arquivos JSON.
+- `inventario.py`: cadastrar, listar, buscar, atualizar e remover.
+- `risco.py`: o cálculo do risco.
+- `main.py`: o menu.
+- `servidor.py`: o serviço que fica ligado no container.
 
-Requisito: Docker com Docker Compose.
+## Como o risco é calculado
 
-```
-git clone https://github.com/Rodrigo-lealcs/trabalho_2.git
-cd trabalho_2
-docker compose up -d --build
-```
+1. Cada vulnerabilidade tem uma nota (baixa 2, média 5, alta 7,5, crítica 9,5).
+2. O **risco próprio** de um equipamento é a soma das notas das suas vulnerabilidades, multiplicada por um peso do tipo dele (servidor pesa mais que notebook).
+3. Alguns equipamentos dependem de outros. Quem depende recebe uma parte do risco do outro.
+4. Isso vira a equação **(I − A) x = b**, em que b é o risco próprio, A são as dependências e x é o risco final.
+5. Antes de resolver, o programa confere se a equação tem uma única solução (matriz invertível).
 
-Conferir:
-
-- `http://localhost:8000/saude` devolve `{"status": "ok"}`.
-- `http://localhost:8000/equipamentos` lista os equipamentos cadastrados.
-
-Ver os logs: `docker compose logs`. Parar: `docker compose down`.
-
-O container usa `restart: unless-stopped`, e os dados ficam em um volume (`inventario_dados`),
-então sobrevivem a reinicializações.
-
-Sem Docker (para desenvolvimento):
-
-```
-cd att3
-pip install -r requirements.txt
-python servidor.py
-```
-
-## Formato dos dados
-
-O arquivo `data/inventario.json` é uma lista de objetos JSON, um por equipamento. O campo
-`tipo` indica a classe a ser criada na leitura.
-
-```json
-{
-    "id_ativo": 1,
-    "nome": "roteador central",
-    "ip": "123.245.0.1",
-    "vulnerabilidades": [],
-    "tipo": "ROTEADOR",
-    "quantidade_portas": 4
-}
-```
+Exemplo feito à mão (está nos testes): b = 9, 18,75 e 5. Resultado final: 9, 20,55 e 15,275.
